@@ -69,4 +69,7 @@ module.exports = {
         !!user && !!user.isAdmin,
     }),
   ],
+  configureExpress: app => {
+    app.set('trust proxy', true)
+  },
 }
