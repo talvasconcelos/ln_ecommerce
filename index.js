@@ -27,6 +27,9 @@ const adapterConfig = {
 
 const keystone = new Keystone({
   adapter: new Adapter(adapterConfig),
+  cookie: {
+    secure: true,
+  },
   cookieSecret: process.env.KEYSTONE_SECRET,
 })
 
