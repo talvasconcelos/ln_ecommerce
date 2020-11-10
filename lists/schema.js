@@ -21,7 +21,7 @@ const {
 const payment = require(`../lib/${process.env.PAYMENT_PROVIDER}`)
 const { convert } = require('../lib/payment')
 const { atTracking } = require('@keystonejs/list-plugins')
-const { sendMail } = require('./emails')
+const { sendMail } = require('../emails')
 
 const fileAdapter = new CloudinaryAdapter({
   cloudName: process.env.CLOUDINARY_CLOUD_NAME,
