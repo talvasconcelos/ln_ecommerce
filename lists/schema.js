@@ -21,6 +21,7 @@ const {
 const payment = require(`../lib/${process.env.PAYMENT_PROVIDER}`)
 const { convert } = require('../lib/payment')
 const { atTracking } = require('@keystonejs/list-plugins')
+const { sendMail } = require('./emails')
 
 const fileAdapter = new CloudinaryAdapter({
   cloudName: process.env.CLOUDINARY_CLOUD_NAME,
@@ -214,6 +215,33 @@ exports.Order = {
           amount: amount.sats,
           payment_request: invoice.payment_request,
         })
+        await sendMail(updateItem.user_email, {
+          subject: 'New order at SparkStore',
+          order: updateItem,
+        })
+        /*
+        const props = {
+          recipientEmail: updatedItem.user_email,
+          orderUrl: `https://sparkstore.sparkpay.pt/invoices/${updatedItem.id.toString()}`,
+        }
+
+        const options = {
+          subject: 'Your order at SparkStore',
+          to: updatedItem.user_email,
+          from: process.env.MAILGUN_FROM,
+          nodemailerConfig: {
+            host: 'smtp.ethereal.email',
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+              user: testAccount.user, // generated ethereal user
+              pass: testAccount.pass, // generated ethereal password
+            },
+          },
+        }
+
+        await sendEmail('new-order.jsx', props, options)
+        */
         // console.log('new invoice', newInvoice)
       } catch (e) {
         console.error(e)
