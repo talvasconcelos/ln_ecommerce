@@ -206,7 +206,7 @@ exports.Order = {
       })
 
       try {
-        // console.log('try', updatedItem, amount)
+        // console.log('try', invoice)
         await addInvoice(context, {
           order: { connect: { id: updatedItem.id } },
           fiat: updatedItem.total,
