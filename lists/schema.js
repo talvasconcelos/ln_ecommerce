@@ -217,7 +217,7 @@ exports.Order = {
         })
         await sendMail(updatedItem.user_email, {
           subject: 'New order at SparkStore',
-          order: updateItem,
+          order: updatedItem,
         })
         /*
         const props = {
