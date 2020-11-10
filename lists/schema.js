@@ -215,7 +215,7 @@ exports.Order = {
           amount: amount.sats,
           payment_request: invoice.payment_request,
         })
-        await sendMail(updateItem.user_email, {
+        await sendMail(updatedItem.user_email, {
           subject: 'New order at SparkStore',
           order: updateItem,
         })
