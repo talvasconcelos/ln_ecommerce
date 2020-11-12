@@ -71,7 +71,8 @@ module.exports = {
   ],
   configureExpress: app => {
     app.set('trust proxy', true)
-    app.get('/invoices/:id', async function(req, res) {
+    app.get('/admin/api/invoices/:id', async function(req, res) {
+      console.log(req.params.id)
       // Retrieve the tag from our URL path
       let id = req.params.id
 
