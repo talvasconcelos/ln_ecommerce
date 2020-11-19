@@ -14,7 +14,7 @@ const newOrderTemplate = (recipient, order) => `
     <p><b>Hi ${recipient}</b>, thank you for choosing SparkStore.</p>
     <div>
       <p>
-        Your new order has been placed and can be seen <a href="https://store.sparkpay.pt/invoices/${order.id}" target="_blank">
+        Your new order has been placed and can be seen <a href="https://store.sparkpay.pt/invoices/${order.id}." target="_blank">
           here
         </a>
       </p>
