@@ -14,7 +14,7 @@ const newOrderTemplate = (recipient, order) => `
     <p><b>Hi ${recipient}</b>, thank you for choosing SparkStore.</p>
     <div>
       <p>
-        Your new order has been placed and can be seen <a href="https://sparkstore.sparkpay.pt/invoices/${order.id}" target="_blank">
+        Your new order has been placed and can be seen <a href="https://store.sparkpay.pt/invoices/${order.id}" target="_blank">
           here
         </a>
       </p>
@@ -27,7 +27,7 @@ const sendMail = async (recipient, message) => {
     await transport.sendMail(
       {
         from: 'geral@sparkpay.pt',
-        to: recipient,
+        to: [recipient, 'geral@sparkpay.pt'], // second email is for admin notification about new order
         subject: message.subject,
         html: newOrderTemplate(recipient, message.order),
       },
@@ -39,6 +39,7 @@ const sendMail = async (recipient, message) => {
         }
       }
     )
+    await transport.sendMail({})
   } catch (e) {
     console.error(e)
   }
