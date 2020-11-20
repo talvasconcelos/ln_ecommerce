@@ -1,1 +1,2 @@
-web: hide npm start
+web: npm start
+worker: hide
