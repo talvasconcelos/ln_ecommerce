@@ -1,1 +1,1 @@
-web: ./tor/bin/run_tor npm start
+web: hide npm start
