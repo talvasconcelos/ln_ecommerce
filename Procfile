@@ -1,2 +1,1 @@
-web: keystone start
-tor: tor
+web: ./tor/bin/run_tor keystone start
