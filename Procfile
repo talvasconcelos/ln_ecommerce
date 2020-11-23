@@ -1,1 +1,2 @@
-web: hide keystone start
+web: keystone start
+tor: tor
