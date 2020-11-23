@@ -28,9 +28,9 @@
     "@keystonejs/server-side-graphql-client": "^1.1.2",
     "cross-env": "^7.0.0",
     "dotenv": "^8.2.0",
+    "got": "^11.8.0",
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.4.15",
-    "socks-proxy-agent": "^5.0.0",
-    "tor-request": "^3.1.0"
+    "socks-proxy-agent": "^5.0.0"
   }
 }
