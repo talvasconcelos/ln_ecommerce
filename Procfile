@@ -1,2 +1,2 @@
-web: keystone start
-worker: hide
+web: tor keystone start
+tor: tor
