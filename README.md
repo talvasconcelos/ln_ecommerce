@@ -1,15 +1,15 @@
-# KeystoneJS Blank Starter Template
+# Sparkstore
 
-You've created a KeystoneJS project! This project contains an AdminUI and GraphQL App.
+A simple ecommerce CMS working on Lightning Network. You can use [LNPay](https://lnpay.co/), [LNBits](https://lnbits.com/)(also behind Tor if you run it on the Raspiblitz) or lntxbot at Telegram, as the payment gateway!
 
-You probably want to add Lists, Authentication, Access control and a front-end application.
+Sparkstore runs with [KeystoneJS](https://www.keystonejs.com/). An awesome headless CMS for NodeJS.
 
-## Running the Project.
+There's also a frontend UI to go with it, more on that bellow.
 
-To run this project first run `npm install`. Note: If you generated this project via the Keystone cli step this has been done for you \\o/.
+## Running and deploying Sparkstore
 
-Once running the Keystone Admin UI is reachable via: `localhost:3000/admin`.
+Sparkstore is a NodeJS app, so you'll need a NodeJS capable server.
 
-## Next steps
+...
 
-This example has no front-end application but you can build your own using the GraphQL API (`http://localhost:3000/admin/graphiql`).
+I'll be updating this readme over the next couple of days!
