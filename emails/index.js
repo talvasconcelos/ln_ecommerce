@@ -27,7 +27,7 @@ const sendMail = async (recipient, message) => {
     await transport.sendMail(
       {
         from: 'geral@sparkpay.pt',
-        to: [recipient, 'geral@sparkpay.pt'], // second email is for admin notification about new order
+        to: recipient,
         subject: message.subject,
         html: newOrderTemplate(recipient, message.order),
       },
@@ -39,18 +39,32 @@ const sendMail = async (recipient, message) => {
         }
       }
     )
-    await transport.sendMail({})
   } catch (e) {
     console.error(e)
   }
   return
 }
 
-// sendMail('talvasconcelos@gmail.com', {
-//   subject: 'testing mail',
-//   order: {
-//     id: 'hhhhehhehe',
-//   },
-// })
+const notifyAdmin = async order => {
+  try {
+    await transport.sendMail(
+      {
+        from: 'geral@sparkpay.pt',
+        to: 'geral@sparkpay.pt',
+        subject: 'New Order at Sparkstore',
+        text: `There's a new paid order: ${order}!`,
+      },
+      (err, info) => {
+        if (err) {
+          console.log(err)
+        } else {
+          console.log(info)
+        }
+      }
+    )
+  } catch (e) {
+    console.error(e)
+  }
+}
 
-module.exports = { sendMail }
+module.exports = { sendMail, notifyAdmin }

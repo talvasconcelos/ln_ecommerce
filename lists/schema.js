@@ -16,12 +16,10 @@ const {
   getItem,
   updateItem,
 } = require('@keystonejs/server-side-graphql-client')
-// const { createdAt, updatedAt } = require('@keystonejs/list-plugins')
-// const payment = process.env.PAYMENT_PROVIDER
 const payment = require(`../lib/${process.env.PAYMENT_PROVIDER}`)
 const { convert } = require('../lib/payment')
 const { atTracking } = require('@keystonejs/list-plugins')
-const { sendMail } = require('../emails')
+const { sendMail, notifyAdmin } = require('../emails')
 
 const fileAdapter = new CloudinaryAdapter({
   cloudName: process.env.CLOUDINARY_CLOUD_NAME,
@@ -207,7 +205,6 @@ exports.Order = {
       })
 
       try {
-        // console.log('try', invoice)
         await addInvoice(context, {
           order: { connect: { id: updatedItem.id } },
           fiat: updatedItem.total,
@@ -219,84 +216,10 @@ exports.Order = {
           subject: 'New order at SparkStore',
           order: updatedItem,
         })
-        /*
-        const props = {
-          recipientEmail: updatedItem.user_email,
-          orderUrl: `https://sparkstore.sparkpay.pt/invoices/${updatedItem.id.toString()}`,
-        }
-
-        const options = {
-          subject: 'Your order at SparkStore',
-          to: updatedItem.user_email,
-          from: process.env.MAILGUN_FROM,
-          nodemailerConfig: {
-            host: 'smtp.ethereal.email',
-            port: 587,
-            secure: false, // true for 465, false for other ports
-            auth: {
-              user: testAccount.user, // generated ethereal user
-              pass: testAccount.pass, // generated ethereal password
-            },
-          },
-        }
-
-        await sendEmail('new-order.jsx', props, options)
-        */
-        // console.log('new invoice', newInvoice)
       } catch (e) {
         console.error(e)
       }
     },
-    /*afterChange: async ({ context, operation, updatedItem, existingItem }) => {
-      if (operation === 'update') {
-        let inv = await getInvoice(context, {
-          itemId: existingItem.invoice.toString(),
-        })
-        let lastUpdate = new Date(inv.updatedAt).getTime()
-        let ellapsedMin = Math.floor((Date.now() - lastUpdate) / 1000 / 60)
-        // console.log(ellapsedMin)
-        // console.log(lastUpdate)
-        if (ellapsedMin < 15) {
-          console.log('invoice still active')
-          return
-        }
-      }
-      //if (operation !== 'create') return
-      const amount = await convert(updatedItem.total)
-      // console.log(amount)
-      const invoice = await payment.generateInvoice({
-        amount: amount.sats,
-        memo: `Payment for Order: ${updatedItem.id} at SparkStore`,
-        passThru: {
-          sparkOrderId: updatedItem.id,
-        },
-      })
-      // console.log(amount, invoice, updatedItem)
-      try {
-        // console.log('try', updatedItem, amount)
-        if (operation === 'create') {
-          await addInvoice(context, {
-            order: { connect: { id: updatedItem.id } },
-            fiat: updatedItem.total,
-            invoiceId: invoice.id,
-            amount: amount.sats,
-            payment_request: invoice.payment_request,
-          })
-        } else if (operation === 'update') {
-          await updateInvoice(context, {
-            id: existingItem.invoice.toString(),
-            data: {
-              invoiceId: invoice.id,
-              amount: amount.sats,
-              payment_request: invoice.payment_request,
-            },
-          })
-        }
-        // console.log('new invoice', newInvoice)
-      } catch (e) {
-        console.error(e)
-      }
-    },*/
   },
 }
 
@@ -356,31 +279,6 @@ exports.Invoice = {
         console.log('validateInput', resolvedData)
       }
     },
-    /*beforeChange: async ({
-      context,
-      operation,
-      resolvedData,
-      existingItem,
-    }) => {
-      if (operation !== 'update') return
-      // console.log(resolvedData)
-      const userInput = {
-        id: existingItem.order.toString(),
-      }
-      const { invoice, amount } = generateInvoice({
-        total: existingItem.total,
-        orderid: userInput.id,
-      })
-      await updateInvoice(context, {
-        id: existingItem.id.toString(),
-        data: {
-          invoiceId: invoice.id,
-          amount: amount.sats,
-          payment_request: invoice.payment_request,
-        },
-      })
-      await longPolling(resolvedData.invoiceId, context, { ...userInput })
-    },*/
     afterChange: async ({ context, operation, updatedItem, existingItem }) => {
       console.log('afterChange', updatedItem)
       const userInput = {
@@ -396,34 +294,6 @@ exports.Invoice = {
       })
 
       await longPolling(updatedItem.invoiceId, context, { ...userInput })
-      // console.debug('Leaving the hook!')
-
-      /*if (operation === 'update') {
-        await updateOrder(context, {
-          ...userInput,
-          data: { status: 'pending' },
-        })
-        const amount = await convert(resolvedData.fiat, 11829)
-        console.log('update')
-        const invoice = await payment.generateInvoice({
-          amount: amount.sats,
-          memo: `Payment for Order: ${resolvedData.id} at SparkStore`,
-          passThru: {
-            sparkOrderId: resolvedData.id,
-          },
-        })
-
-        await updateInvoice(context, {
-          id: resolvedData.id.toString(),
-          data: {
-            invoiceId: invoice.id,
-            amount: amount.sats,
-            payment_request: invoice.payment_request,
-          },
-        })
-        await longPolling(resolvedData.invoiceId, context, { ...userInput })
-      }*/
-      //return
     },
   },
 }
@@ -442,8 +312,10 @@ async function longPolling(id, context, input) {
       let data = {}
       data.settled = paid
       data.status = paid ? 'paid' : 'expired'
+      if (paid) {
+        notifyAdmin(input.id)
+      }
       return updateOrder(context, { ...input, data })
     }
-    // console.log(15 - ellapsedMin, 'minutes left!')
   }, 10000)
 }
